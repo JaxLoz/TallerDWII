@@ -3,7 +3,9 @@
 namespace controller;
 
 use dao\Athletedao;
+use interfaceDao\AthleteDaoInterface;
 use model\Athlete;
+use view\vista;
 
 require "dao/Athletedao.php";
 require "model/Athlete.php";
@@ -11,55 +13,24 @@ require "model/Athlete.php";
 class AthleteController
 {
 
-    private Athletedao $athletedao;
+    private AthleteDaoInterface $athletedao;
+    private Vista $view;
 
     public function __construct(){
         $this->athletedao = new Athletedao();
+        $this->view = new Vista();
     }
 
     public function athletesGet()
     {
-        $athlete = $this->athletedao->getAllAthletes();
-
-        if($athlete == null){
-            $response = [
-                "status code" => 404,
-                "message" => "No athlete found"
-            ];
-            http_response_code(404);
-        }else{
-            $response = [
-                "status code" => 200,
-                "message" => "Athlete found",
-                "athletes" => $athlete
-            ];
-            http_response_code(200);
-        }
-        header("Content-Type: application/json");
-        echo json_encode($response);
+        $athletes = $this->athletedao->getAll();
+        $this->view->showResponse($athletes, 'Athlete', 'found');
     }
 
     public function athleteGet($id)
     {
-        $athlete = $this->athletedao->getAthleteById($id);
-
-        if(!isset($athlete)){
-            $response = [
-                "status code" => 404,
-                "message" => "No athlete found"
-            ];
-            http_response_code(404);
-        }else{
-            $response = [
-                "status code" => 200,
-                "message" => "Athlete found",
-                "athlete" => $athlete
-            ];
-            http_response_code(200);
-        }
-
-        header("Content-Type: application/json");
-        echo json_encode($response);
+        $athlete = $this->athletedao->getById($id);
+        $this->view->showResponse($athlete, 'Athlete', 'found');
     }
 
     public function insertAthletePost(){
@@ -71,24 +42,8 @@ class AthleteController
         $Athlete->setGender($infoAthlete["gender"]);
         $Athlete->setCountry($infoAthlete["country"]);
 
-        $insertedAthlete = $this->athletedao->createAthlete($Athlete);
-
-        if($insertedAthlete == null){
-            $response = [
-                "status code" => 400,
-                "message" => "Error in insert athlete"
-            ];
-            http_response_code(400);
-        }else{
-            $response = [
-                "status code" => 201,
-                "message" => "Athlete inserted",
-                "id" => $insertedAthlete
-            ];
-            http_response_code(201);
-        }
-        header("Content-Type: application/json");
-        echo json_encode($response);
+        $insertedAthlete = $this->athletedao->insertInformation($Athlete);
+        $this->view->showResponse($insertedAthlete, 'Athlete', 'inserted');
     }
 
     public function updateAthletePut($id)
@@ -103,68 +58,20 @@ class AthleteController
         $Athlete->setCountry($data["country"]);
         $Athlete->setId($id);
 
-        $updatedAthlete = $this->athletedao->updateAthlete($Athlete);
-
-        if(!$updatedAthlete){
-            $response = [
-                "status code" => 400,
-                "message" => "Error in update athlete"
-            ];
-            http_response_code(400);
-        }else{
-            $response = [
-                "status code" => 200,
-                "message" => "Athlete updated"
-            ];
-            http_response_code(200);
-        }
-        header("Content-Type: application/json");
-        echo json_encode($response);
-
+        $updatedAthlete = $this->athletedao->updateInformation($Athlete);
+        $this->view->showResponse($updatedAthlete, 'Athlete', 'updated');
     }
 
     public function deleteAthleteDelete($id)
     {
-        $deletedAthlete = $this->athletedao->deleteAthlete($id);
-
-        if(!$deletedAthlete){
-            $response = [
-                "status code" => 404,
-                "message" => "No athlete found"
-            ];
-            http_response_code(404);
-        }else{
-            $response = [
-                "status code" => 200,
-                "message" => "Athlete deleted",
-            ];
-            http_response_code(200);
-        }
-        header("Content-Type: application/json");
-        echo json_encode($response);
+        $deletedAthlete = $this->athletedao->deleteInformation($id);
+        $this->view->showResponse($deletedAthlete, 'Athlete', 'deleted');
     }
 
     public function getInfoParticipationAndAthleteGet($id)
     {
         $info = $this->athletedao->getParticipationByAthleteId($id);
-
-        if(!isset($info)){
-            $response = [
-                "status code" => 404,
-                "message" => "No Info found"
-            ];
-            http_response_code(404);
-        }else{
-            $response = [
-                "status code" => 200,
-                "message" => "Info found",
-                "athlete" => $info
-            ];
-            http_response_code(200);
-        }
-
-        header("Content-Type: application/json");
-        echo json_encode($response);
+        $this->view->showResponse($info, 'Athlete', 'found');
     }
 
 }

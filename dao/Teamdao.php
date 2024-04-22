@@ -5,15 +5,17 @@ namespace dao;
 use model\Team;
 use PDO;
 use PDOException;
+use TeamInterfaceDao;
 use util\DbConnection;
+use view\vista;
+
+require "interfaceDao/TeamInterfaceDao.php";
 
 
-
-class Teamdao
+class Teamdao implements TeamInterfaceDao
 {
 
     private PDO $con;
-
 
     public function __construct(){
         $this->con = DbConnection::getInstance()->getConnection();
@@ -59,7 +61,7 @@ class Teamdao
     }
 
 
-    public function insertTeam(Team $team)
+    public function insertTeam(Team $team): bool
     {
         $name = $team->getName();
         $country = $team->getCountry();

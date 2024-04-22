@@ -4,11 +4,14 @@ namespace dao;
 
 use model\Athlete;
 use model\Participation;
+use ParticipationDaoInterface;
 use PDO;
 use PDOException;
 use util\DbConnection;
 
-class Participationdao
+require "interfaceDao/ParticipationDaoInterface.php";
+
+class Participationdao implements ParticipationDaoInterface
 {
     private PDO $con;
 
@@ -37,7 +40,7 @@ class Participationdao
         return null;
     }
 
-    public function getparticipationById(int $id)
+    public function getParticipationById(int $id)
     {
         $sql = "SELECT * FROM participation WHERE id = :id";
 
@@ -56,7 +59,7 @@ class Participationdao
         return null;
     }
 
-    public function insertParticipation(Participation $participation)
+    public function insertParticipation(Participation $participation): bool
     {
         $status = $participation->getStatus();
         $result = $participation->getResult();

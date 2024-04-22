@@ -2,63 +2,35 @@
 
 namespace controller;
 
+use Couchbase\View;
 use dao\Eventdao;
 use model\Event;
+use view\vista;
 
 require "dao/Eventdao.php";
 require "model/Event.php";
+require "view/Vista.php";
 
 class EventController
 {
     private Eventdao $eventDao;
+    private Vista $view;
 
     public function __construct(){
         $this->eventDao = new Eventdao();
+        $this->view = new Vista();
     }
 
     public function eventsGet()
     {
-        $events = $this->eventDao->getEvents();
-
-        if($events == null){
-            $response = [
-                "status code" => 404,
-                "message" => "No events found"
-            ];
-            http_response_code(404);
-        }else{
-            $response = [
-                "status code" => 200,
-                "message" => "Events found",
-                "events" => $events
-            ];
-            http_response_code(200);
-        }
-        header("Content-Type: application/json");
-        echo json_encode($response);
+        $events = $this->eventDao->getAllEvents();
+        $this->view->showResponse($events, "event", "found");
     }
 
     public function eventGet($id)
     {
         $event = $this->eventDao->getEventById($id);
-
-        if(!isset($event)){
-            $response = [
-                "status code" => 404,
-                "message" => "No event found"
-            ];
-            http_response_code(404);
-        }else{
-            $response = [
-                "status code" => 200,
-                "message" => "Event found",
-                "event" => $event
-            ];
-            http_response_code(200);
-        }
-
-        header("Content-Type: application/json");
-        echo json_encode($response);
+        $this->view->showResponse($event, "event", "found");
     }
 
     public function insertEventPost(){
@@ -70,25 +42,11 @@ class EventController
         $event->setDescription($infoEvent["description"]);
 
         $insertedEvent = $this->eventDao->insertEvent($event);
+        $this->view->showResponse($insertedEvent, 'event', 'inserted');
 
-        if($insertedEvent == null){
-            $response = [
-                "status code" => 400,
-                "message" => "Error in insert event"
-            ];
-            http_response_code(400);
-        }else{
-            $response = [
-                "status code" => 201,
-                "message" => "Event inserted"
-            ];
-            http_response_code(201);
-        }
-        header("Content-Type: application/json");
-        echo json_encode($response);
     }
 
-    public function updateEventPost($id)
+    public function updateEventPut($id)
     {
         $data = json_decode(file_get_contents("php://input"),true);
 
@@ -101,44 +59,13 @@ class EventController
 
 
         $updatedEvent = $this->eventDao->updateEvent($event);
-
-        if(!$updatedEvent){
-            $response = [
-                "status code" => 400,
-                "message" => "Error in update event"
-            ];
-            http_response_code(400);
-        }else{
-            $response = [
-                "status code" => 200,
-                "message" => "Event updated"
-            ];
-            http_response_code(200);
-        }
-        header("Content-Type: application/json");
-        echo json_encode($response);
-
+        $this->view->showResponse($updatedEvent, 'event', 'updated');
     }
 
     public function deleteEventDelete($id)
     {
         $events = $this->eventDao->deleteEvent($id);
-
-        if(!$events){
-            $response = [
-                "status code" => 404,
-                "message" => "No events found"
-            ];
-            http_response_code(404);
-        }else{
-            $response = [
-                "status code" => 200,
-                "message" => "Events deleted",
-            ];
-            http_response_code(200);
-        }
-        header("Content-Type: application/json");
-        echo json_encode($response);
+        $this->view->showResponse($events, 'event', 'deleted');
     }
 
 }

@@ -2,12 +2,14 @@
 
 namespace dao;
 
-use model\Athlete;
+use interfaceDao\AthleteDaoInterface;
 use PDO;
 use PDOException;
 use util\DbConnection;
 
-class Athletedao
+require "interfaceDao/AthleteDaoInterface.php";
+
+class Athletedao implements AthleteDaoInterface
 {
 
     private PDO $con;
@@ -17,8 +19,9 @@ class Athletedao
         $this->con = DbConnection::getInstance()->getConnection();
     }
 
-    public function getAllAthletes()
+    public function getAll()
     {
+
         $sql = "SELECT * FROM athlete";
         $stmt = $this->con->prepare($sql);
 
@@ -35,9 +38,10 @@ class Athletedao
         }
 
         return null;
+
     }
 
-    public function getAthleteById(int $id)
+    public function getById($id)
     {
         $sql = "SELECT * FROM athlete WHERE id = :id";
 
@@ -56,16 +60,16 @@ class Athletedao
         return null;
     }
 
-    public function createAthlete(Athlete $athlete)
+    public function insertInformation($model)
     {
         $sql = "INSERT INTO athlete (firstname, lastname, age, gender, country) VALUES (:firstname, :lastname, :age, :gender, :country)";
         $stmt = $this->con->prepare($sql);
 
-        $firstName = $athlete->getFirstName();
-        $lastName = $athlete->getLastName();
-        $age = $athlete->getAge();
-        $gender = $athlete->getGender();
-        $country = $athlete->getCountry();
+        $firstName = $model->getFirstName();
+        $lastName = $model->getLastName();
+        $age = $model->getAge();
+        $gender = $model->getGender();
+        $country = $model->getCountry();
 
         $stmt->bindParam(':firstname', $firstName);
         $stmt->bindParam(':lastname', $lastName);
@@ -82,17 +86,17 @@ class Athletedao
         return 0;
     }
 
-    public function updateAthlete(Athlete $athlete): bool
+    public function updateInformation($model): bool
     {
         $sql = "UPDATE athlete SET firstname = :firstname, lastname = :lastname, age = :age, gender = :gender, country = :country WHERE id = :id";
         $stmt = $this->con->prepare($sql);
 
-        $firstName = $athlete->getFirstName();
-        $lastName = $athlete->getLastName();
-        $age = $athlete->getAge();
-        $gender = $athlete->getGender();
-        $country = $athlete->getCountry();
-        $id = $athlete->getId();
+        $firstName = $model->getFirstName();
+        $lastName = $model->getLastName();
+        $age = $model->getAge();
+        $gender = $model->getGender();
+        $country = $model->getCountry();
+        $id = $model->getId();
 
         $stmt->bindParam(':firstname', $firstName);
         $stmt->bindParam(':lastname', $lastName);
@@ -112,7 +116,7 @@ class Athletedao
         return false;
     }
 
-    public function deleteAthlete(int $id): bool
+    public function deleteInformation(int $id): bool
     {
         $sql = "DELETE FROM athlete WHERE id = :id";
         $stmt = $this->con->prepare($sql);
@@ -129,6 +133,7 @@ class Athletedao
         }
         return false;
     }
+
 
     public function getParticipationByAthleteId($id)
     {

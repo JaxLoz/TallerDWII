@@ -2,13 +2,16 @@
 
 namespace dao;
 
+use EventInterfaceDao;
 use model\Event;
 use PDO;
 use PDOException;
 use util\DbConnection;
 
 require "util/DbConnection.php";
-class Eventdao
+require "interfaceDao/EventInterfaceDao.php";
+
+class Eventdao implements EventInterfaceDao
 {
 
     private PDO $con;
@@ -18,7 +21,7 @@ class Eventdao
         $this->con = DbConnection::getInstance()->getConnection();
     }
 
-    public function getEvents()
+    public function getAllEvents()
     {
 
         try {
