@@ -4,8 +4,10 @@ namespace controller;
 
 use Couchbase\View;
 use dao\Eventdao;
+use EventInterfaceDao;
 use model\Event;
 use view\vista;
+use viewInterface;
 
 require "dao/Eventdao.php";
 require "model/Event.php";
@@ -13,8 +15,8 @@ require "view/Vista.php";
 
 class EventController
 {
-    private Eventdao $eventDao;
-    private Vista $view;
+    private EventInterfaceDao $eventDao;
+    private viewInterface $view;
 
     public function __construct(){
         $this->eventDao = new Eventdao();

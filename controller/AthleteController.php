@@ -6,6 +6,7 @@ use dao\Athletedao;
 use interfaceDao\AthleteDaoInterface;
 use model\Athlete;
 use view\vista;
+use viewInterface;
 
 require "dao/Athletedao.php";
 require "model/Athlete.php";
@@ -14,7 +15,7 @@ class AthleteController
 {
 
     private AthleteDaoInterface $athletedao;
-    private Vista $view;
+    private viewInterface $view;
 
     public function __construct(){
         $this->athletedao = new Athletedao();

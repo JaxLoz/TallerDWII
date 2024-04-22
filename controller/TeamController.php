@@ -4,7 +4,9 @@ namespace controller;
 
 use dao\Teamdao;
 use model\Team;
+use TeamInterfaceDao;
 use view\vista;
+use viewInterface;
 
 require "dao/Teamdao.php";
 require "model/Team.php";
@@ -12,8 +14,8 @@ require "model/Team.php";
 class TeamController
 {
 
-    private Teamdao $teamDao;
-    private Vista $view;
+    private TeamInterfaceDao $teamDao;
+    private viewInterface $view;
 
     public function __construct(){
         $this->teamDao = new Teamdao();

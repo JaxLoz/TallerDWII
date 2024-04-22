@@ -4,7 +4,9 @@ namespace controller;
 
 use dao\Participationdao;
 use model\Participation;
+use ParticipationDaoInterface;
 use view\vista;
+use viewInterface;
 
 require "dao/Participationdao.php";
 require "model/Participation.php";
@@ -12,8 +14,8 @@ require "model/Participation.php";
 class ParticipationController
 {
 
-    private Participationdao $parDao;
-    private Vista $view;
+    private ParticipationDaoInterface $parDao;
+    private viewInterface $view;
 
     public function __construct(){
         $this->parDao = new Participationdao();
